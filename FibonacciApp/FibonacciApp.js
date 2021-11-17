@@ -5,11 +5,9 @@ var app = express();
 
 app.get('/fibonacci/:nthIn', function (req, res) {
   console.time('FiboCalculation');
-  var nth = FibonacciService.getNthNumberInSequence(parseInt(req.params.nthIn))
+  let nth = FibonacciService.getNthNumberInSequence(parseInt(req.params.nthIn))
   res.send('The answer is ' + nth);
-  console.time('FiboCalculation');
-  
-  console.log('This shit takes ${end-start} seconds to calculate the ${req.params.nthIn}th Fibonacci number!');
+  console.timeEnd('FiboCalculation');
 });
 
 app.get('/', function (req, res) {  

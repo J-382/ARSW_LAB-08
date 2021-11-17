@@ -85,19 +85,49 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 
 **Preguntas**
 
-1. ¿Cuántos y cuáles recursos crea Azure junto con la VM?
+1. ¿Cuántos y cuáles recursos crea Azure junto con la VM? 
+   ```
+   Crea 5 recursos además de la maquina virtual:
+	• Red Virtual
+	• Direccion IP Publica
+    • Grupo de Seguridad (Red)
+	• Interfaz de Red
+	• Disco
+   ```
 2. ¿Brevemente describa para qué sirve cada recurso?
+   ```• Red Virtual: La red virtual de azure permite muchos tipos de recursos de Azure, como Azure Virtual Machines (máquinas virtuales), para comunicarse de forma segura entre usuarios, con Internet y con las redes locales. VNet es similar a una red tradicional que funcionaría en su propio centro de datos, pero aporta las ventajas adicionales de la infraestructura de Azure, como la escala, la disponibilidad y el aislamiento.
+   • Direccion IP Publica: Las direcciones IP públicas permiten a los recursos de Internet la comunicación entrante a los recursos de Azure. Azure asigna dinámicamente una dirección IP disponible que no está dedicada al recurso.
+   • Grupo de seguridad: Un grupo de seguridad de red es un filtro aplicable al trafico que se genera desde y hacia los recursos de azure en una red virtual. Un grupo de seguridad de red contiene reglas de seguridad que permiten o deniegan el tráfico de red entrante o el tráfico de red saliente de varios tipos de recursos de Azure.
+   • Interfaz de Red: Una interfaz de red permite que una máquina virtual de Azure se comunique con los recursos de Internet, Azure y locales.
+   • Disco: Los discos de Azure son volúmenes de almacenamiento de nivel de bloque administrados por Azure y utilizados con las Maquinas Virtuales. Los discos administrados son como un disco físico en un servidor local, pero virtualizados.```
 3. ¿Al cerrar la conexión ssh con la VM, por qué se cae la aplicación que ejecutamos con el comando `npm FibonacciApp.js`? ¿Por qué debemos crear un *Inbound port rule* antes de acceder al servicio?
+   ```Al cerrar la conexion SSH se cierra tambien la sesion de usuario en la Maquina virtual, terminando todos los procesos asociados a esta. Porque todas las peticiones que intenten acceder a un puerto que no esta abierto seran rechazadas automaticamente.```
 4. Adjunte tabla de tiempos e interprete por qué la función tarda tando tiempo.
+   ```Los numeros que genera la funcion de Fibonacci crecen de manera alarmante a medida que la funcion se mueve en el eje x hacia el infinito, la aplicacion tiene que manejar la suma de enteros extremadamente grandes por varias iteraciones, dichas sumas son realizadas por el procesador, por lo que procesadores la potencia del procesador tendra un impacto enorme en el performance de la aplicacion.```
+   ![](images/part1/Tiempos-1.PNG)
 5. Adjunte imágen del consumo de CPU de la VM e interprete por qué la función consume esa cantidad de CPU.
+   ```La CPU es la que se encarga de las operaciones matematicas, es de esperarse que el uso del CPU aumente considerablemente al tratarse de operaciones con numeros tan grandes.```
+    ![](images/part1/CPU_usage-1.PNG)
+
 6. Adjunte la imagen del resumen de la ejecución de Postman. Interprete:
     * Tiempos de ejecución de cada petición.
     * Si hubo fallos documentelos y explique.
+    ![](images/part1/Carga_concurrente-1.PNG)
+    ![](images/part1/Carga_concurrente-2.PNG)
+    ```
+    • ECONNRESET: Finalización abrupta de la conexión TCP, probablemente debido a que el servidor estaba sobrecargado y era incapaz de responder
+    ```
+
 7. ¿Cuál es la diferencia entre los tamaños `B2ms` y `B1ls` (no solo busque especificaciones de infraestructura)?
+    ```La B1ls es actualmente la oferta mas barata de Azure para maquinas virtuales, esta pensada para bases de datos pequeñas y entornos de pruebas, cuenta con 1 solo nucleo de procesamiento y 512MB de ram, las operaciones IO que soporta por segundo apenas llegan a las 160. La B2ms es un poco mas flexible con la carga que puede recibir, cuenta con 2 nucleos de procesamiento, 8GiB de memoria ram (16 veces mas que la B1ls) y las operaciones IO que soporta por segundo llegan a las 1920.```
 8. ¿Aumentar el tamaño de la VM es una buena solución en este escenario?, ¿Qué pasa con la FibonacciApp cuando cambiamos el tamaño de la VM?
-9. ¿Qué pasa con la infraestructura cuando cambia el tamaño de la VM? ¿Qué efectos negativos implica?
+    ```Si bien los tiempos de respuesta de la aplicacion disminuyeron considerablemente, un escalamiento vertical no es una buena solucion para nuestro problema. Para las cargas concurrentes se siguen presentando perdidas de conexion con el servidor (Probablemente porque el servidor estaba ocupado resolviendo otra peticion y el timeout se completó).```
+9.  ¿Qué pasa con la infraestructura cuando cambia el tamaño de la VM? ¿Qué efectos negativos implica?
+    ```Los recursos siguen siendo los mismo. El unico efecto negativo evidente es que el costo de la arquitectura aumentará.```
 10. ¿Hubo mejora en el consumo de CPU o en los tiempos de respuesta? Si/No ¿Por qué?
+    ```No. Si bien hubo una mejora en los tiempos de respuesta, el consumo "disminuyó" porque la capacidad del nuevo procesador es mayor, pero al no hacer un cambio en el codigo la cantidad de procesador que requiere la App sigue siendo la misma.```
 11. Aumente la cantidad de ejecuciones paralelas del comando de postman a `4`. ¿El comportamiento del sistema es porcentualmente mejor?
+![](images/part1/Carga_concurrente-3.PNG)
 
 ### Parte 2 - Escalabilidad horizontal
 
