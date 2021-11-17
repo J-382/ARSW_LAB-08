@@ -101,7 +101,10 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
    • Interfaz de Red: Una interfaz de red permite que una máquina virtual de Azure se comunique con los recursos de Internet, Azure y locales.
    • Disco: Los discos de Azure son volúmenes de almacenamiento de nivel de bloque administrados por Azure y utilizados con las Maquinas Virtuales. Los discos administrados son como un disco físico en un servidor local, pero virtualizados.```
 3. ¿Al cerrar la conexión ssh con la VM, por qué se cae la aplicación que ejecutamos con el comando `npm FibonacciApp.js`? ¿Por qué debemos crear un *Inbound port rule* antes de acceder al servicio?
-   ```Al cerrar la conexion SSH se cierra tambien la sesion de usuario en la Maquina virtual, terminando todos los procesos asociados a esta. Porque todas las peticiones que intenten acceder a un puerto que no esta abierto seran rechazadas automaticamente.```
+   ```
+   • Al cerrar la conexion SSH se cierra tambien la sesion de usuario en la Maquina virtual, terminando todos los procesos asociados a esta. 
+   • Porque todas las peticiones que intenten acceder a un puerto que no esta abierto seran rechazadas automaticamente.
+   ```
 4. Adjunte tabla de tiempos e interprete por qué la función tarda tando tiempo.
    ```Los numeros que genera la funcion de Fibonacci crecen de manera alarmante a medida que la funcion se mueve en el eje x hacia el infinito, la aplicacion tiene que manejar la suma de enteros extremadamente grandes por varias iteraciones, dichas sumas son realizadas por el procesador, por lo que procesadores la potencia del procesador tendra un impacto enorme en el performance de la aplicacion.```
    ![](images/part1/Tiempos-1.PNG)
@@ -127,6 +130,7 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 10. ¿Hubo mejora en el consumo de CPU o en los tiempos de respuesta? Si/No ¿Por qué?
     ```No. Si bien hubo una mejora en los tiempos de respuesta, el consumo "disminuyó" porque la capacidad del nuevo procesador es mayor, pero al no hacer un cambio en el codigo la cantidad de procesador que requiere la App sigue siendo la misma.```
 11. Aumente la cantidad de ejecuciones paralelas del comando de postman a `4`. ¿El comportamiento del sistema es porcentualmente mejor?
+    ```No. Los tiempos de respuesta siguen siendo altos y no varian mucho con respecto a la prueba anterior, ademas de que se siguen presentando finalizaciones abruptas en la conexión por falta de respuesta de la maquina.```
 ![](images/part1/Carga_concurrente-3.PNG)
 
 ### Parte 2 - Escalabilidad horizontal
@@ -136,6 +140,7 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 Antes de continuar puede eliminar el grupo de recursos anterior para evitar gastos adicionales y realizar la actividad en un grupo de recursos totalmente limpio.
 
 1. El Balanceador de Carga es un recurso fundamental para habilitar la escalabilidad horizontal de nuestro sistema, por eso en este paso cree un balanceador de carga dentro de Azure tal cual como se muestra en la imágen adjunta.
+
 
 ![](images/part2/part2-lb-create.png)
 
@@ -216,14 +221,43 @@ newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALAN
 **Preguntas**
 
 * ¿Cuáles son los tipos de balanceadores de carga en Azure y en qué se diferencian?, ¿Qué es SKU, qué tipos hay y en qué se diferencian?, ¿Por qué el balanceador de carga necesita una IP pública?
+    ```
+    • Existen los balanceadores de carga publicos y los balanceadores de carga internos. Los balanceadores de carga publicos se encargan de regular la carga de peticiones provenientes del trafico de internet a las maquinas virtuales, es por esto que requieren una IP publica. Los privados realizan el mismo funcionamiento pero dentro de una red privada virtual.
+    • Los SKU son los niveles de servicio en Azure. Determinan las caracteristicas de escalabilidad y operabilidad de un servicio y asi mismo su costo. Para la mayoria de servicios se encuentran los SKU: Basic, Standard, Premium.
+    • Dado que el funcionamiento del balanceador de cargas es regular la carga del trafico del internet, es necesario exponerlo (IP publico) para que pueda recibir peticiones.
+    ```
 * ¿Cuál es el propósito del *Backend Pool*?
+    ```
+    • Es un grupo logico de instacias de una aplicacion, desplegadas a traves de diferentes regiones (o en la misma) y que reciben el mismo trafico y responden de la misma manera esperada.
+    ```
 * ¿Cuál es el propósito del *Health Probe*?
+    ```
+    • Ayudan al balanceador de cargas a determinar, a traves de peticiones de prueba, cual de los endpoints en el backend pool recibira la siguiente carga de peticiones.
+    ```
 * ¿Cuál es el propósito de la *Load Balancing Rule*? ¿Qué tipos de sesión persistente existen, por qué esto es importante y cómo puede afectar la escalabilidad del sistema?.
+    ```
+    • Define como se distribuye el tráfico entrante a todas las instancias dentro del grupo de backend. Una Load Balancing Rule asigna una configuración IP de frontend y un puerto determinado a varios puertos y direcciones IP del backend. 
+    • Permiten que las peticiones de una direccion especifica sean atendidas por una sola maquina, puede persistirse la direccion IP del cliente y la direccion IP del cliente más el protocolo.
+    ```
 * ¿Qué es una *Virtual Network*? ¿Qué es una *Subnet*? ¿Para qué sirven los *address space* y *address range*?
+    ```
+    • Es el bloque de creación fundamental de una red privada en Azure. VNet permite muchos tipos de recursos de Azure, como las máquinas virtuales, comunicarse de forma segura con usuarios, Internet y redes locales.
+    • Son un rango de direcciones IP dentro de una red virtual, configurados para mejorar la organizacion y seguridad de la red y sus recursos.
+    • Rango de la red que se dividira en sub-redes
+    • Rango de direcciones disponibles para la asignacion al momento de configurar una red virtual.
+    ```
 * ¿Qué son las *Availability Zone* y por qué seleccionamos 3 diferentes zonas?. ¿Qué significa que una IP sea *zone-redundant*?
 * ¿Cuál es el propósito del *Network Security Group*?
+    ```
+    • Su porposito es filtrar el trafico desde y hacia una serie de recursos en una red virtual. Un Network Security Group contiene reglas de seguridad que permiten aceptar o denegar el trafico de red entrante o saliente para varios tipos de recursos (VM, Load-Balancers, etc). En dichas reglas se puede especificar origen, destino, puerto y protocolo.
+    ```
 * Informe de newman 1 (Punto 2)
+![](images/part2/Informe-1.PNG)
+![](images/part2/Carga_comparacion.png)
+    `El escalamiento horizontal resulta ser mejor tanto economicamente como en performance, para la misma carga concurrente de peticiones(2), el escalamiento horizontal logro responder satisfactoriamente cada una de las peticiones ademas de mantener tiempos de respuesta bajos.`
 * Presente el Diagrama de Despliegue de la solución.
+
+
 
 
 
