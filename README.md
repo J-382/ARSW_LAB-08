@@ -3,6 +3,9 @@
 
 ## Escalamiento en Azure con Maquinas Virtuales, Sacale Sets y Service Plans
 
+## Repositorio
+ * [Github](https://github.com/J-382/ARSW_LAB-08/)
+
 ### Dependencias
 * Cree una cuenta gratuita dentro de Azure. Para hacerlo puede guiarse de esta [documentación](https://azure.microsoft.com/en-us/free/search/?&ef_id=Cj0KCQiA2ITuBRDkARIsAMK9Q7MuvuTqIfK15LWfaM7bLL_QsBbC5XhJJezUbcfx-qAnfPjH568chTMaAkAsEALw_wcB:G:s&OCID=AID2000068_SEM_alOkB9ZE&MarinID=alOkB9ZE_368060503322_%2Bazure_b_c__79187603991_kwd-23159435208&lnkd=Google_Azure_Brand&dclid=CjgKEAiA2ITuBRDchty8lqPlzS4SJAC3x4k1mAxU7XNhWdOSESfffUnMNjLWcAIuikQnj3C4U8xRG_D_BwE). Al hacerlo usted contará con $200 USD para gastar durante 1 mes.
 
@@ -211,6 +214,10 @@ http://52.155.223.248/fibonacci/1
 
 3. Agregue una 4 maquina virtual y realice las pruebas de newman, pero esta vez no lance 2 peticiones en paralelo, sino que incrementelo a 4. Haga un informe donde presente el comportamiento de la CPU de las 4 VM y explique porque la tasa de éxito de las peticiones aumento con este estilo de escalabilidad.
 
+![](images/part2/CPU_Usage.PNG)
+
+```Podemos observar que la carga al CPU es practicamente la misma para cada una de las maquinas virtuales, un buen indicio de que el balanceador de cargas funciona de manera correcta.```
+
 ```
 newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALANCING_AZURE].postman_environment.json -n 10 &
 newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALANCING_AZURE].postman_environment.json -n 10 &
@@ -256,7 +263,7 @@ newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALAN
 ![](images/part2/Carga_comparacion.png)
     `El escalamiento horizontal resulta ser mejor tanto economicamente como en performance, para la misma carga concurrente de peticiones(2), el escalamiento horizontal logro responder satisfactoriamente cada una de las peticiones ademas de mantener tiempos de respuesta bajos.`
 * Presente el Diagrama de Despliegue de la solución.
-
+![](images/part2/Diagram.PNG)
 
 
 
